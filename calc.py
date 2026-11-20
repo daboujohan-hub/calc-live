@@ -8,6 +8,8 @@ import curses
 import math
 import re
 from collections import deque
+import os
+os.environ.setdefault("ESCDELAY", "25")
 
 # ─── Conversions disponibles ───────────────────────────────────────────────
 CONVERSIONS = {
@@ -87,6 +89,25 @@ def smart_format(n):
     formatted = f"{n:.10g}"
     return formatted
 
+def try_percent(expr):
+    """Pourcentages boutique."""
+    e = expr.strip().lower().replace(",", ".")
+    num = r"(\d+(?:\.\d+)?)"
+    m = re.fullmatch(rf"prix\s*{num}\s*b[ée]n[ée]fice\s*{num}\s*%", e)
+    if m:
+        prix, pct = float(m.group(1)), float(m.group(2))
+        gain = prix * pct / 100
+        return f"vente {smart_format(prix + gain)}  (gain {smart_format(gain)})"
+    m = re.fullmatch(rf"{num}\s*([+-])\s*{num}\s*%", e)
+    if m:
+        base, op, pct = float(m.group(1)), m.group(2), float(m.group(3))
+        delta = base * pct / 100
+        return smart_format(base + delta if op == "+" else base - delta)
+    m = re.fullmatch(rf"{num}\s*%\s*(?:de|of)\s*{num}", e)
+    if m:
+        return smart_format(float(m.group(1)) * float(m.group(2)) / 100)
+    return None
+
 def evaluate(expr):
     """Évalue une expression mathématique."""
     if not expr.strip():
@@ -95,6 +116,9 @@ def evaluate(expr):
     conv = try_conversion(expr)
     if conv:
         return conv
+    pct = try_percent(expr)
+    if pct:
+        return pct
     # Remplacements courants
     cleaned = expr.strip()
     cleaned = cleaned.replace("^", "**")
@@ -131,6 +155,7 @@ def draw_ui(stdscr):
         "  sqrt(x)  sin(x)  cos(x)  log(x)  log2(x)",
         "  pi  e  tau  abs(x)  round(x)  x**n",
         "  100 km to miles  |  37 c to f  |  70 kg to lbs",
+        "  prix 5000 benefice 20%  |  20% de 5000",
     ]
 
     while True:
@@ -229,7 +254,7 @@ def draw_ui(stdscr):
         # ── Lecture touche ──────────────────────────────────────
         key = stdscr.get_wch()
 
-        if key == 27:                          # Escape → quitter
+        if key in (27, "\x1b"):                          # Escape → quitter
             break
         elif key == "\x0c":                    # Ctrl+L → effacer
             expr = ""
