@@ -119,7 +119,7 @@ def try_ab(expr, stdscr=None, apply=False):
             if apply:
                 ab_splash(stdscr)
                 if arg != "anim":
-                    _ab_show(stdscr, "ABOUDEV", AB_AIDE)
+                    ab_aide_screen(stdscr)
                 return "Aboudev"
             return "Entrée pour ouvrir Aboudev"
         if arg == "liste":

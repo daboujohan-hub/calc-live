@@ -1,5 +1,6 @@
 # ─── Lot 9 : boutons, LED, plot, état, progression, accueil ────────────────
-import math, time, ast, datetime
+import math, time, ast
+import datetime as _dt
 
 ZONE_TOP = 15
 
@@ -254,7 +255,7 @@ def _barre_etat():
     u = _usd()
     if u:
         parts.append(u)
-    parts.append(datetime.datetime.now().strftime("%H:%M"))
+    parts.append(_dt.datetime.now().strftime("%H:%M"))
     return " │ ".join(parts)
 
 # ── dessins ──
@@ -339,6 +340,51 @@ def _buttons(stdscr, my, mx):
         stdscr.addstr(my - 4, x, lab.center(w - 1), a | curses.A_BOLD)
         _hot["cells"].append((x, x + w, val))
 
+def _hist_lines(n):
+    try:
+        with open(HIST_FILE, "rb") as f:
+            f.seek(0, 2)
+            f.seek(max(0, f.tell() - 4096))
+            data = f.read().decode("utf-8", "ignore")
+        out = []
+        for l in reversed(data.splitlines()[-n:]):
+            t = l[18:].replace("  =  ", " = ").strip()
+            if t:
+                out.append(t)
+        return out
+    except Exception:
+        return []
+
+def _after_panel(stdscr, done, zh, mx, deg):
+    expr_t, res = done
+    A1 = curses.color_pair(1) | curses.A_BOLD
+    A3 = curses.color_pair(3)
+    A4 = curses.color_pair(4)
+    if res.strip() in ("", "..."):
+        res = "⚠  calcul incomplet"
+    y = ZONE_TOP
+    stdscr.addstr(y, 2, ("› " + expr_t)[:mx - 3], A4)
+    stdscr.addstr(y + 1, 2, ("= " + res)[:mx - 3], A1)
+    y += 3
+    if zh >= 9 and "⚠" not in res:
+        try:
+            v = _safe(expr_t, deg=deg, ans=_st["last"])
+            _led(stdscr, v, y, mx)
+            y += 6
+        except Exception:
+            pass
+    rows = ZONE_TOP + zh - y
+    if rows >= 2:
+        done_t = "%s = %s" % (expr_t, res)
+        lines = _hist_lines(rows)
+        if lines and lines[0] == done_t:
+            lines = lines[1:]
+        lines = lines[:rows - 1]
+        if lines:
+            stdscr.addstr(y, 2, "Historique", A3 | curses.A_BOLD)
+            for i, t in enumerate(lines):
+                stdscr.addstr(y + 1 + i, 2, ("  " + t)[:mx - 3], A4 | curses.A_DIM)
+
 def extras_draw(stdscr, expr):
     try:
         my, mx = stdscr.getmaxyx()
@@ -373,6 +419,10 @@ def extras_draw(stdscr, expr):
                     _led(stdscr, _st["last"], ZONE_TOP, mx)
                 except Exception:
                     pass
+        else:
+            d = _st.get("done")
+            if d and zh >= 3:
+                _after_panel(stdscr, d, zh, mx, deg)
         if _st.get("mouse"):
             _buttons(stdscr, my, mx)
         stdscr.addstr(my - 2, 1, _barre_etat()[:mx - 2], curses.color_pair(3))
@@ -392,7 +442,7 @@ def extras_draw(stdscr, expr):
 def _accueil_du_jour():
     return True  # accueil à chaque lancement
     f = os.path.expanduser("~/.calc_accueil")
-    today = datetime.date.today().isoformat()
+    today = _dt.date.today().isoformat()
     try:
         with open(f) as h:
             if h.read().strip() == today:

@@ -87,6 +87,21 @@ Tape `aide` pour toutes les commandes, `apropos` pour la présentation du projet
 - `theme clair`, `theme sombre`
 - `tactile on` / `tactile off` : boutons tactiles
 
+### Commandes avancées
+- `restaure NOM` : restaurer une sauvegarde précise
+- `hauteur 10 angle 35 oeil 1.6` : même mesure, avec la hauteur de tes yeux
+
+### Aboudev (langage d'AbouDev Labs)
+CALC sait lancer **Aboudev**, un langage de programmation en français créé par AbouDev Labs. Il s'installe à part : une commande `aboudev`, ou le fichier `~/aboudev/aboudev.py`. Tes programmes (`.a`) vivent dans `~/aboudev`. Exemple, un programme d'une ligne : `affiche Bonjour le monde !`
+- `ab affiche Bonjour` : exécuter une ligne
+- `ab prog.a` : lancer un programme
+- `ab edite prog` : écrire un programme avec nano, puis le lancer
+- `ab liste` : voir tes programmes
+- `ab anim` : revoir l'animation
+
+**Attention :** Aboudev peut exécuter des commandes, lire, écrire et supprimer des fichiers, et utiliser le réseau. Ne lance que des programmes dont tu connais le contenu.
+Chaque programme est arrêté au bout de 20 secondes et sa sortie est limitée à 500 lignes.
+
 ## Comment ça marche
 
 - Le code est découpé en morceaux dans `parts/` (calcul, boutique, PIN, mesure, interface...), assemblés au lancement par le petit chargeur `calc.py`. Il est écrit avec la bibliothèque standard de Python et `curses`.
@@ -95,6 +110,19 @@ Tape `aide` pour toutes les commandes, `apropos` pour la présentation du projet
 - La sauvegarde utilise OpenSSL en AES-256-CBC avec dérivation PBKDF2. Sans le mot de passe, elle est impossible à rouvrir.
 - La mesure entre deux téléphones ouvre une connexion locale protégée par un code à 4 chiffres : adresses privées uniquement, 3 essais, 120 secondes.
 - Les taux de change sont enregistrés dans `~/.calc_taux.json`.
+
+## Ce que CALC écrit sur ton téléphone
+
+Les données sont stockées sur ton appareil, dans ton dossier personnel. Les principaux fichiers :
+- `~/calc_historique.txt` : l'historique de tes calculs
+- `~/.calc_data.json` : tes données (ventes, dettes, stock, rappels...)
+- `~/.calc_taux.json` : les taux de change que tu as réglés
+- `~/.calc_config.json` : tes réglages (thème...)
+- `~/.calc_pin.json` : ton PIN, sous forme de hash (jamais en clair)
+- `~/calc_sauvegardes` et `~/calc_factures` : sauvegardes et factures
+- `~/aboudev` : tes programmes Aboudev
+
+Pour effacer tes données, supprime ces fichiers.
 
 ## Contact
 

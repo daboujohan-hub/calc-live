@@ -131,6 +131,7 @@ def draw_ui(stdscr):
             break
         elif key == "\x0c":                    # Ctrl+L → effacer
             expr = ""
+            _st["done"] = None
             cursor_pos = 0
         elif key in (curses.KEY_BACKSPACE, "\x7f", "\b"):
             if cursor_pos > 0:
@@ -151,10 +152,6 @@ def draw_ui(stdscr):
             cursor_pos = len(expr)
         elif key in ("\n", "\r", 10, 13, curses.KEY_ENTER):              # Enter → sauvegarder dans historique
             _dbg("Entrée : reçue")
-            if coffre_check(stdscr, expr.strip()):
-                expr = ""
-                cursor_pos = 0
-                continue
             if expr.strip().lower() in ("tactile", "tactile on", "tactile off"):
                 set_tactile(expr.strip().lower())
                 expr = ""
@@ -182,6 +179,8 @@ def draw_ui(stdscr):
                         f.write(f"{datetime.now():%Y-%m-%d %H:%M}  {expr.strip()}  =  {result}\n")
                 except Exception:
                     pass
+            if expr.strip() and result:
+                _st["done"] = (expr.strip(), str(result))
             expr = ""
             cursor_pos = 0
         elif isinstance(key, str) and key.isprintable():

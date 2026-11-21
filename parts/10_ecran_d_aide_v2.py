@@ -17,7 +17,7 @@ AIDE2 = [
         ("point | terrain", "relevés"), ("terrain efface", "reset"),
         ("mesure serveur", "partage"), ("mesure connecte IP CODE", "lien"),
         ("mesure enregistre nom", "sauver"), ("mesures", "liste")]),
-    ("INFO", [("apropos", "présentation"), ("aide", "commandes"), ("tactile on | off", "boutons tactiles")]),
+    ("INFO", [("apropos", "présentation"), ("aide", "commandes"), ("tactile on | off", "boutons tactiles"), ("ab aide", "langage Aboudev")]),
     ("SÉCURITÉ", [
         ("pin | pin off", "verrou"), ("theme clair | sombre", "look"),
         ("sauvegarde", "copie"), ("export", "fichier"),
