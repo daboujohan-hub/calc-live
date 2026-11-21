@@ -7,6 +7,7 @@ AB_AIDE = [
     "ab prog.a            lance un programme .a",
     "ab edite prog        écrire (nano) puis lancer",
     "ab liste             tes programmes .a",
+    "ab anim              revoir l'animation",
     "",
     "Dossier : ~/aboudev",
     "Attention : Aboudev peut exécuter des commandes.",
@@ -114,11 +115,13 @@ def try_ab(expr, stdscr=None, apply=False):
         return None
     arg = (m.group(1) or "").strip()
     try:
-        if not arg or arg == "aide":
+        if not arg or arg in ("aide", "anim"):
             if apply:
-                _ab_show(stdscr, "ABOUDEV", AB_AIDE)
-                return "aide Aboudev"
-            return "Entrée pour l'aide Aboudev"
+                ab_splash(stdscr)
+                if arg != "anim":
+                    _ab_show(stdscr, "ABOUDEV", AB_AIDE)
+                return "Aboudev"
+            return "Entrée pour ouvrir Aboudev"
         if arg == "liste":
             fs = sorted(f for f in os.listdir(AB_HOME) if f.endswith(".a")) \
                 if os.path.isdir(AB_HOME) else []
