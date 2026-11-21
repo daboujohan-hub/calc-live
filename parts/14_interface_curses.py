@@ -149,7 +149,8 @@ def draw_ui(stdscr):
             cursor_pos = 0
         elif key == curses.KEY_END:
             cursor_pos = len(expr)
-        elif key in ("\n", "\r"):              # Enter → sauvegarder dans historique
+        elif key in ("\n", "\r", 10, 13, curses.KEY_ENTER):              # Enter → sauvegarder dans historique
+            _dbg("Entrée : reçue")
             if coffre_check(stdscr, expr.strip()):
                 expr = ""
                 cursor_pos = 0
@@ -169,9 +170,11 @@ def draw_ui(stdscr):
                 expr = ""
                 cursor_pos = 0
                 continue
+            _dbg("Entrée : avant commande")
             applied = try_lot1(expr, apply=True) or try_lot2(expr, apply=True) or try_lot3(expr, stdscr, apply=True) or try_lot4(expr, stdscr, apply=True) or try_lot5(expr, stdscr, apply=True)
             if applied:
                 result = applied
+            _dbg("Entrée : après commande")
             if expr.strip() and result and "⚠" not in result:
                 history.append((expr.strip(), result))
                 try:

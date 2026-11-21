@@ -17,6 +17,7 @@ if [ "${1:-}" = "--remove" ]; then
 fi
 
 [ -f "$SRC/calc.py" ] || { echo "⚠  calc.py introuvable à côté de install.sh"; exit 1; }
+[ -d "$SRC/parts" ] || { echo "⚠  dossier parts/ introuvable"; exit 1; }
 
 if ! command -v python3 >/dev/null 2>&1 && ! command -v python >/dev/null 2>&1; then
     if [ "$TERMUX" = 1 ]; then pkg install -y python
@@ -37,7 +38,9 @@ if [ "$TERMUX" = 1 ] && ! command -v termux-location >/dev/null 2>&1; then
 fi
 
 mkdir -p "$DATA" "$BIN"
+rm -rf "$DATA/parts"; mkdir -p "$DATA/parts"
 cp "$SRC/calc.py" "$DATA/calc.py"
+cp "$SRC"/parts/*.py "$DATA/parts/"
 cat > "$BIN/$NOM" <<EOF2
 #!/bin/sh
 exec "$PY" "$DATA/calc.py" "\$@"

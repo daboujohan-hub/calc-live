@@ -60,8 +60,16 @@ ABOUT = {
 
 def _nb_lignes():
     try:
-        with open(__file__, encoding="utf-8") as f:
-            return str(sum(1 for _ in f))
+        d = os.path.join(os.path.dirname(os.path.realpath(__file__)), "parts")
+        if os.path.isdir(d):
+            fs = [os.path.join(d, n) for n in sorted(os.listdir(d)) if n.endswith(".py")]
+        else:
+            fs = [os.path.realpath(__file__)]
+        t = 0
+        for f in fs:
+            with open(f, encoding="utf-8") as h:
+                t += sum(1 for _ in h)
+        return str(t)
     except Exception:
         return "?"
 

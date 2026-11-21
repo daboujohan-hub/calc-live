@@ -89,7 +89,7 @@ Tape `aide` pour toutes les commandes, `apropos` pour la présentation du projet
 
 ## Comment ça marche
 
-- Un seul fichier, `calc.py`, écrit avec la bibliothèque standard de Python et `curses`.
+- Le code est découpé en morceaux dans `parts/` (calcul, boutique, PIN, mesure, interface...), assemblés au lancement par le petit chargeur `calc.py`. Il est écrit avec la bibliothèque standard de Python et `curses`.
 - À chaque touche, l'expression est analysée avec `ast` puis calculée, et le résultat s'affiche aussitôt.
 - Le PIN est stocké sous forme de hash PBKDF2-SHA256 (200 000 itérations) avec un sel.
 - La sauvegarde utilise OpenSSL en AES-256-CBC avec dérivation PBKDF2. Sans le mot de passe, elle est impossible à rouvrir.

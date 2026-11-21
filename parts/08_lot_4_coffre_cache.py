@@ -188,7 +188,7 @@ def vault_screen(stdscr, which, pw):
             last = time.time()
             if k in (27, "\x1b"):
                 break
-            if k in ("\n", "\r"):
+            if k in ("\n", "\r", 10, 13, curses.KEY_ENTER):
                 cmd, buf = buf.strip(), ""
                 if cmd.lower() in ("fermer", "quitter", "q"):
                     break
