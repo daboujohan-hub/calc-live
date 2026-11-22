@@ -2,9 +2,25 @@
 import textwrap
 
 APROPOS_CMDS = ("apropos", "a propos", "à propos", "about", "presentation",
-                "présentation", "info", "infos")
+                "présentation", "info", "infos", "salut", "bonjour", "presente toi",
+                "présente toi", "presente-toi", "présente-toi", "qui es-tu", "qui es tu")
 
 ABOUT = {
+    "MOI": [
+        ("h", "Salut, je suis CALC"),
+        ("t", "Une calculatrice vivante, créée par AbouDev Labs : Diomandé Abou Johan, à Abidjan."),
+        ("", ""),
+        ("s", "Ce que je sais faire"),
+        ("l", "Je calcule pendant que tu tapes."),
+        ("l", "Je comprends comme tu parles : 20% de 5000, 100 km to miles."),
+        ("l", "Je tiens ta boutique : ventes, dettes, stock, factures."),
+        ("l", "Je mesure, je trace des courbes et je garde tes données sous PIN."),
+        ("", ""),
+        ("s", "Où je fonctionne"),
+        ("l", "Dans Termux, sur Android. Pour calculer, je n'ai besoin que de ton téléphone."),
+        ("", ""),
+        ("t", "Enchanté ! Tape un calcul, je m'occupe du reste."),
+    ],
     "PROJET": [
         ("h", "CALC · Termux Live Calculator"),
         ("t", "Une calculatrice vivante dans le terminal : le résultat se calcule pendant que tu tapes."),
@@ -101,7 +117,7 @@ def _about_draw(stdscr, tabs, tab, flat, top, page, budget):
         stdscr.addstr(0, 1, "╭─ À PROPOS ─ AbouDev Labs"[:mx - 2], A1)
         x = 1
         for i, t in enumerate(tabs):
-            lab = " %s " % t
+            lab = (" %s " if sum(len(u) + 3 for u in tabs) < mx - 1 else "%s") % t
             if x + len(lab) >= mx:
                 break
             attr = (A1 | curses.A_REVERSE) if i == tab else A4
